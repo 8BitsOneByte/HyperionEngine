@@ -4,7 +4,6 @@
 #pragma once
 
 #include "../../Hyperion/Core/Window.h"
-
 #include "../../Hyperion/Renderer/GraphicsContext.h"
 #include <string>
 
@@ -12,10 +11,6 @@
 #define GLFW_INCLUDE_NONE
 #endif
 #include "GLFW/glfw3.h"
-
-
-#ifndef HYPERIONENGINE_WINDOWSWINDOW_H
-#define HYPERIONENGINE_WINDOWSWINDOW_H
 
 
 struct GLFWwindow;
@@ -63,5 +58,3 @@ namespace Hyperion
         WindowData m_Data;
     };
 } // Hyperion
-
-#endif //HYPERIONENGINE_WINDOWSWINDOW_H

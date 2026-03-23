@@ -1,14 +1,7 @@
 #pragma once
 
 #include "Event.h"
-
-// 如果工程中尚未定义 MouseCode，则提供一个最小的备用定义（避免编译错误）
-// 如果已有定义（例如 enum/typedef/class），此处不会重复定义
-#ifndef MOUSECODE_TYPE_DEFINED
-using MouseCode = int;
-#define MOUSECODE_TYPE_DEFINED
-#endif
-
+#include "Hyperion/Core/MouseButtonCodes.h"
 
 namespace Hyperion
 {

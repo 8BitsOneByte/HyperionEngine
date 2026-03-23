@@ -112,7 +112,6 @@ public:
             layout(location = 0) out vec4 color;
 
             in vec3 v_Position;
-            in vec4 v_Color;
 
             void main()
             {
@@ -123,7 +122,7 @@ public:
         m_BlueShader.reset(new Hyperion::Shader(blueShaderVertexSrc, blueShaderFragmentSrc));
     }
 
-    void OnUpdate() override
+    void OnUpdate(Hyperion::Timestep /*ts*/) override
     {
         //HYPERION_INFO("ExampleLayer::Update");
 
@@ -158,7 +157,7 @@ public:
     {
         if (event.GetEventType() == Hyperion::EventType::KeyPressed)
         {
-            auto& keyEvent = (Hyperion::KeyPressedEvent&)event;
+            auto& keyEvent = static_cast<Hyperion::KeyPressedEvent&>(event);
             HYPERION_TRACE("Key Pressed: {} ", keyEvent.GetKeyCode());
         }
     };
@@ -179,7 +178,7 @@ class Sandbox : public Hyperion::Application
 public:
     Sandbox()
     {
-        PushLayer(new ExampleLayer);;
+        PushLayer(new ExampleLayer);
     }
 
     ~Sandbox() override

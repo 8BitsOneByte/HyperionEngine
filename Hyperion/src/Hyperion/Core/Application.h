@@ -1,19 +1,13 @@
 ﻿#pragma once
 
-#include <map>
-
 #include "Core.h"
+#include "Timestep.h"
 #include "Window.h"
 #include "LayerStack.h"
 #include "../Events/Event.h"
 #include "Hyperion/Events/ApplicationEvent.h"
 
 #include "Hyperion/ImGui/ImGuiLayer.h"
-
-#include "Hyperion/Renderer/Shader.h"
-#include "Hyperion/Renderer/Buffer.h"
-#include "Hyperion/Renderer/OrthographicCamera.h"
-#include "Hyperion/Renderer/VertexArray.h"
 
 namespace Hyperion
 {
@@ -38,11 +32,15 @@ namespace Hyperion
 
     private:
         bool OnWindowClose(WindowCloseEvent& event);
+        bool OnWindowResize(WindowResizeEvent& event);
 
         std::unique_ptr<Window> m_Window;
-        ImGuiLayer* m_ImGuiLayer;
+        ImGuiLayer* m_ImGuiLayer = nullptr;
         bool m_Running = true;
+        bool m_Minimized = false;
         LayerStack m_LayerStack;
+
+        float m_LastFrameTime = 0.0f;
 
         static Application* m_Instance;
     };

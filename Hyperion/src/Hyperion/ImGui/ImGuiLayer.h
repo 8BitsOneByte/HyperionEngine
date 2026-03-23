@@ -24,8 +24,5 @@ namespace Hyperion
 
         void Begin();
         void End();
-
-    private:
-        double m_Time = 0.0;
     };
 } // Hyperion

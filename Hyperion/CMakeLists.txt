@@ -30,19 +30,61 @@ find_package(OpenGL REQUIRED)
 find_package(glfw3 CONFIG)
 
 set(IMGUI_DIR "${CMAKE_SOURCE_DIR}/vendor/imgui")
-set(IMGUI_SOURCES
-        "${IMGUI_DIR}/imgui.cpp"
-        "${IMGUI_DIR}/imgui_demo.cpp"
-        "${IMGUI_DIR}/imgui_draw.cpp"
-        "${IMGUI_DIR}/imgui_tables.cpp"
-        "${IMGUI_DIR}/imgui_widgets.cpp"
-        "${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
-        "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
-)
 
-add_library(imgui STATIC ${IMGUI_SOURCES})
-target_include_directories(imgui SYSTEM PUBLIC "${IMGUI_DIR}" "${IMGUI_DIR}/backends")
-target_link_libraries(imgui PUBLIC glfw OpenGL::GL glad)
+if (EXISTS "${IMGUI_DIR}/imgui.cpp")
+    # Use the locally checked-out vendor/imgui submodule.
+    set(IMGUI_SOURCES
+            "${IMGUI_DIR}/imgui.cpp"
+            "${IMGUI_DIR}/imgui_demo.cpp"
+            "${IMGUI_DIR}/imgui_draw.cpp"
+            "${IMGUI_DIR}/imgui_tables.cpp"
+            "${IMGUI_DIR}/imgui_widgets.cpp"
+            "${IMGUI_DIR}/backends/imgui_impl_glfw.cpp"
+            "${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp"
+    )
+
+    add_library(imgui STATIC ${IMGUI_SOURCES})
+    target_include_directories(imgui SYSTEM PUBLIC "${IMGUI_DIR}" "${IMGUI_DIR}/backends")
+    target_link_libraries(imgui PUBLIC glfw OpenGL::GL glad)
+else()
+    # Fall back to a system-installed imgui.
+    # Locate the core header and static library portably.
+    find_path(IMGUI_INCLUDE_DIR imgui.h PATH_SUFFIXES imgui)
+    find_path(IMGUI_BACKENDS_SRC_DIR imgui_impl_glfw.cpp
+              PATHS
+                  /usr/share/doc/libimgui-dev/examples/backends  # Debian/Ubuntu
+              PATH_SUFFIXES
+                  imgui/backends
+                  backends
+    )
+    find_library(IMGUI_LIBRARY NAMES imgui)
+    find_library(STB_LIBRARY NAMES stb)
+
+    if (IMGUI_INCLUDE_DIR AND IMGUI_BACKENDS_SRC_DIR AND IMGUI_LIBRARY)
+        # The static library already includes the core imgui objects; only the
+        # platform/renderer backends need to be compiled separately here.
+        add_library(imgui STATIC
+                "${IMGUI_BACKENDS_SRC_DIR}/imgui_impl_glfw.cpp"
+                "${IMGUI_BACKENDS_SRC_DIR}/imgui_impl_opengl3.cpp"
+        )
+        target_include_directories(imgui SYSTEM PUBLIC
+                "${IMGUI_INCLUDE_DIR}"
+                "${IMGUI_INCLUDE_DIR}/backends"
+                "${IMGUI_BACKENDS_SRC_DIR}"
+        )
+        set(_IMGUI_LINK_LIBS glfw OpenGL::GL glad "${IMGUI_LIBRARY}")
+        if (STB_LIBRARY)
+            list(APPEND _IMGUI_LINK_LIBS "${STB_LIBRARY}")
+        endif()
+        target_link_libraries(imgui PUBLIC ${_IMGUI_LINK_LIBS})
+        target_compile_definitions(imgui PUBLIC IMGUI_IMPL_OPENGL_LOADER_GLAD2)
+    else()
+        message(FATAL_ERROR
+            "imgui not found. Please either:\n"
+            "  1. Initialise the vendor/imgui git submodule, or\n"
+            "  2. Install imgui development files (e.g. libimgui-dev on Debian/Ubuntu).")
+    endif()
+endif()
 
 add_library(Hyperion SHARED
         ${HYPERION_SOURCES}
@@ -54,7 +96,16 @@ target_include_directories(Hyperion PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 if (WIN32)
     target_compile_definitions(Hyperion PUBLIC HYPERION_PLATFORM_WINDOWS PRIVATE HYPERION_BUILD_DLL)
+elseif (UNIX AND NOT APPLE)
+    target_compile_definitions(Hyperion PUBLIC HYPERION_PLATFORM_LINUX PRIVATE HYPERION_BUILD_DLL)
+elseif (APPLE)
+    target_compile_definitions(Hyperion PUBLIC HYPERION_PLATFORM_MACOS PRIVATE HYPERION_BUILD_DLL)
 endif ()
+
+# Enable assertions in Debug builds
+target_compile_definitions(Hyperion PUBLIC
+    $<$<CONFIG:Debug>:HYPERION_ENABLE_ASSERTS>
+)
 
 hyperion_configure_target(Hyperion)
 

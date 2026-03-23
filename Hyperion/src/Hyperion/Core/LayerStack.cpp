@@ -7,11 +7,6 @@
 
 namespace Hyperion
 {
-    LayerStack::LayerStack()
-    {
-        m_LayerInsert = m_Layers.begin();
-    }
-
     LayerStack::~LayerStack()
     {
         for (Layer* layer : m_Layers)
@@ -37,7 +32,6 @@ namespace Hyperion
         auto it = std::find(m_Layers.begin(), m_Layers.begin() + m_LayerInsertIndex, layer);
         if (it != m_Layers.begin() + m_LayerInsertIndex)
         {
-            layer->OnDetach();
             m_Layers.erase(it);
             m_LayerInsertIndex--;
         }
@@ -48,7 +42,6 @@ namespace Hyperion
         auto it = std::find(m_Layers.begin() + m_LayerInsertIndex, m_Layers.end(), overlay);
         if (it != m_Layers.end())
         {
-            overlay->OnDetach();
             m_Layers.erase(it);
         }
     }

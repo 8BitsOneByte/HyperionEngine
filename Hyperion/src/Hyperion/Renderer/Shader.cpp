@@ -9,6 +9,7 @@
 
 #include "glm/gtc/type_ptr.hpp"
 #include "Hyperion/Core/Core.h"
+#include "Hyperion/Core/Log.h"
 
 namespace Hyperion
 {
@@ -39,8 +40,7 @@ namespace Hyperion
             // We don't need the shader anymore.
             glDeleteShader(vertexShader);
 
-
-            HYPERION_CORE_ASSERT("{}", infoLog.data());
+            HYPERION_CORE_ERROR("Vertex shader compilation failure: {}", infoLog.data());
             HYPERION_CORE_ASSERT(false, "Vertex shader compilation failure!");
 
             return;
@@ -72,7 +72,7 @@ namespace Hyperion
             // Either of them. Don't leak shaders.
             glDeleteShader(vertexShader);
 
-            HYPERION_CORE_ASSERT("{}", infoLog.data());
+            HYPERION_CORE_ERROR("Fragment shader compilation failure: {}", infoLog.data());
             HYPERION_CORE_ASSERT(false, "Fragment shader compilation failure!");
 
             return;
@@ -110,7 +110,7 @@ namespace Hyperion
             glDeleteShader(vertexShader);
             glDeleteShader(fragmentShader);
 
-            HYPERION_CORE_ASSERT("{}", infoLog.data());
+            HYPERION_CORE_ERROR("Shader link failure: {}", infoLog.data());
             HYPERION_CORE_ASSERT(false, "Shader link failure!");
 
             return;

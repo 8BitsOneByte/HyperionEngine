@@ -1,16 +1,14 @@
 ﻿#include "Application.h"
 
 #include <functional>
-
-#include "imgui.h"
-#include "../Events/ApplicationEvent.h"
+#include <chrono>
 
 #include "Log.h"
+#include "../Events/ApplicationEvent.h"
 #include "../Events/Event.h"
 
 #include "Layer.h"
 #include "Window.h"
-#include "glm/glm.hpp"
 #include "Hyperion/Renderer/Renderer.h"
 
 
@@ -40,6 +38,7 @@ namespace Hyperion
     {
         EventDispatcher dispatcher(event);
         dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(OnWindowClose));
+        dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(OnWindowResize));
 
         for (auto it = m_LayerStack.end(); it != m_LayerStack.begin();)
         {
@@ -76,29 +75,21 @@ namespace Hyperion
 
     void Application::Run()
     {
-        WindowResizeEvent e(1280, 720);
-        if (e.IsInCategory(EventCategoryApplication))
-        {
-            HYPERION_TRACE("WindowResizeEvent is in Application Category");
-        }
-        if (e.IsInCategory(EventCategoryInput))
-        {
-            HYPERION_TRACE("WindowResizeEvent is in Input Category");
-        }
+        using clock = std::chrono::steady_clock;
+        static const auto s_StartTime = clock::now();
 
-        HYPERION_TRACE("WindowResizeEvent: {}, {}", e.GetWidth(), e.GetHeight());
         while (m_Running)
         {
+            float currentTime = std::chrono::duration<float>(clock::now() - s_StartTime).count();
+            Timestep timestep(currentTime - m_LastFrameTime);
+            m_LastFrameTime = currentTime;
 
+            if (!m_Minimized)
+            {
+                for (Layer* layer : m_LayerStack)
+                    layer->OnUpdate(timestep);
+            }
 
-
-            for (Layer* layer : m_LayerStack)
-                layer->OnUpdate();
-
-            /*
-            auto[x, y] = Input::GetMousePosition();
-            HYPERION_CORE_TRACE("Mouse Position: {}, {}", x, y);
-            */
             m_ImGuiLayer->Begin();
             for (Layer* layer : m_LayerStack)
             {
@@ -114,5 +105,16 @@ namespace Hyperion
     {
         m_Running = false;
         return true;
+    }
+
+    bool Application::OnWindowResize(WindowResizeEvent& event)
+    {
+        if (event.GetWidth() == 0 || event.GetHeight() == 0)
+        {
+            m_Minimized = true;
+            return false;
+        }
+        m_Minimized = false;
+        return false;
     }
 }

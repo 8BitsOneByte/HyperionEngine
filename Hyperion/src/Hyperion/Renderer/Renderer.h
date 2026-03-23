@@ -7,7 +7,7 @@
 
 #include "OrthographicCamera.h"
 #include "Shader.h"
-#include "Hyperion\Renderer\RenderCommand.h"
+#include "Hyperion/Renderer/RenderCommand.h"
 #include "Hyperion/Core/Core.h"
 
 namespace Hyperion
@@ -31,7 +31,7 @@ namespace Hyperion
             glm::mat4 ViewProjectionMatrix;
         };
 
-        static SceneData* m_SceneData;
+        static SceneData s_SceneData;
     };
 } // Hyperion
 
