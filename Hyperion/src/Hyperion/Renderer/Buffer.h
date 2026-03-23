@@ -78,13 +78,11 @@ namespace Hyperion
     class BufferLayout
     {
     public:
-    public:
         BufferLayout() = default;
 
         BufferLayout(const std::initializer_list<BufferElement>& elements)
             : m_Elements(elements)
         {
-            m_Elements = elements;
             CalculateOffsetAndSize();
         }
 

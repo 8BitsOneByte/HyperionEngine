@@ -45,10 +45,10 @@ namespace Hyperion
 
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable; // Enable Docking
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport / Platform Windows
-        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
-        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
+#ifdef IMGUI_HAS_DOCK
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   // Enable Docking (docking branch only)
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable Multi-Viewport (docking branch only)
+#endif
 
         Application& app = Application::Get();
         GLFWwindow* window = static_cast<GLFWwindow*>(app.GetWindow().GetNativeWindow());
@@ -77,10 +77,10 @@ namespace Hyperion
         ImGuiIO& io = ImGui::GetIO();
         Application& app = Application::Get();
         io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
-        io.FontGlobalScale = 3.0f;
         // Rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+#ifdef IMGUI_HAS_DOCK
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             GLFWwindow* backup_current_context = glfwGetCurrentContext();
@@ -88,6 +88,7 @@ namespace Hyperion
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);
         }
+#endif
     }
 
     void ImGuiLayer::OnImGuiRender()

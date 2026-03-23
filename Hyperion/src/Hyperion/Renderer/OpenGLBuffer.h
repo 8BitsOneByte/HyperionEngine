@@ -5,7 +5,7 @@
 #ifndef HYPERIONENGINE_OPENGLBUFFER_H
 #define HYPERIONENGINE_OPENGLBUFFER_H
 
-#include "Hyperion\Renderer\Buffer.h"
+#include "Hyperion/Renderer/Buffer.h"
 
 namespace Hyperion
 {

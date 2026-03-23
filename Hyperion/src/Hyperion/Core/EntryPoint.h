@@ -1,19 +1,17 @@
 ﻿#pragma once
 
-#ifdef HYPERION_PLATFORM_WINDOWS
 #include "Log.h"
+#include "Application.h"
+
 extern Hyperion::Application* CreateApplication();
 
 int main(int /*argc*/, char** /*args*/)
 {
     Hyperion::Log::Init();
-    HYPERION_CORE_WARN("Initialized Log!");
-    HYPERION_INFO("Hello!");
+    HYPERION_CORE_INFO("Hyperion Engine starting up");
 
-    printf("Hyperion Engine\n");
     auto app = CreateApplication();
     app->Run();
     delete app;
     return 0;
 }
-#endif

@@ -13,7 +13,6 @@ namespace Hyperion
           m_ViewMatrix(1.0f),
           m_ViewProjectionMatrix(m_ProjectionMatrix * m_ViewMatrix)
     {
-        m_ViewProjectionMatrix = m_ProjectionMatrix * m_ViewMatrix;
     }
 
     void OrthographicCamera::RecalculateViewMatrix()

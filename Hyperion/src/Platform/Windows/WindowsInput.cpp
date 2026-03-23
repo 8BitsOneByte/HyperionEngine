@@ -18,8 +18,6 @@ namespace Hyperion
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         auto state = glfwGetKey(window, keycode);
         return state == GLFW_PRESS || state == GLFW_REPEAT;
-        // Implement Windows-specific key press detection
-        return false; // Placeholder implementation
     }
 
     bool WindowsInput::IsMouseButtonPressedImpl(int button)
@@ -27,8 +25,6 @@ namespace Hyperion
         auto window = static_cast<GLFWwindow*>(Application::Get().GetWindow().GetNativeWindow());
         auto state = glfwGetMouseButton(window, button);
         return state == GLFW_PRESS;
-        // Implement Windows-specific mouse button press detection
-        return false; // Placeholder implementation
     }
 
     std::pair<float, float> WindowsInput::GetMousePositionImpl()
@@ -37,8 +33,6 @@ namespace Hyperion
         double xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
         return {static_cast<float>(xpos), static_cast<float>(ypos)};
-        // Implement Windows-specific mouse position retrieval
-        return {0.0f, 0.0f}; // Placeholder implementation
     }
 
     float WindowsInput::GetMouseXImpl()

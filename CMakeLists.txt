@@ -24,8 +24,24 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(HyperionCommon)
 
-add_subdirectory(vendor/glm)
-add_subdirectory(vendor/spdlog)
-add_subdirectory(vendor/glfw)
+# Prefer locally checked-out vendor trees when present; fall back to installed packages.
+if (EXISTS "${CMAKE_SOURCE_DIR}/vendor/glm/CMakeLists.txt")
+    add_subdirectory(vendor/glm)
+else()
+    find_package(glm CONFIG REQUIRED)
+endif()
+
+if (EXISTS "${CMAKE_SOURCE_DIR}/vendor/spdlog/CMakeLists.txt")
+    add_subdirectory(vendor/spdlog)
+else()
+    find_package(spdlog CONFIG REQUIRED)
+endif()
+
+if (EXISTS "${CMAKE_SOURCE_DIR}/vendor/glfw/CMakeLists.txt")
+    add_subdirectory(vendor/glfw)
+else()
+    find_package(glfw3 CONFIG REQUIRED)
+endif()
+
 add_subdirectory(Hyperion)
 add_subdirectory(Sandbox)

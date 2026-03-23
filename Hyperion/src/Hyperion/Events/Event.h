@@ -7,10 +7,10 @@
 
 namespace Hyperion
 {
-    // Events in Hazel are currently blocking, meaning when an event occurs it
-    // immediately gets dispatched and must be dealt with right then an there.
-    // For the future, a better strategy might be to buffer events in an event
-    // bus and process them during the "event" part of the update stage.
+    // Events are currently blocking: when an event occurs it is dispatched
+    // immediately and must be handled before control returns to the caller.
+    // A future improvement would be to buffer events in an event bus and
+    // process them during a dedicated "event" stage of the update loop.
 
     enum class EventType
     {

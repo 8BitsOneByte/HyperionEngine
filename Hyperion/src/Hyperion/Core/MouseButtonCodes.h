@@ -5,6 +5,13 @@
 #ifndef HYPERIONENGINE_MOUSEBUTTONCODES_H
 #define HYPERIONENGINE_MOUSEBUTTONCODES_H
 
+#include <cstdint>
+
+namespace Hyperion
+{
+    // Platform-agnostic mouse button code alias; maps to backend mouse button codes (e.g., GLFW).
+    using MouseCode = std::uint8_t;
+}
 
 /* Mouse button codes from glfw3.h */
 #define HYPERION_MOUSE_BUTTON_1         0

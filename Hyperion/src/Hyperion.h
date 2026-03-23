@@ -3,6 +3,7 @@
 #include "Hyperion/Core/Application.h"
 #include "Hyperion/Core/Layer.h"
 #include "Hyperion/Core/Log.h"
+#include "Hyperion/Core/Timestep.h"
 
 #include "Hyperion/Core/Input.h"
 #include "Hyperion/Core/KeyCodes.h"
